@@ -18,15 +18,15 @@ import streamlit as st
 from PIL import Image
 
 # Create a page dropdown
-st.sidebar.title("Site Navigation")
+st.sidebar.title("Menu")
 
-page = st.sidebar.selectbox("", ["Home",
-                                 "Product Insights"
-                                 "Warehouse Insights"])
+# page = st.sidebar.selectbox("", ["Home",
+#                                  "Product Insights"
+#                                  "Warehouse Insights"])
 
 # Create a page 'radio' - probably best to just choose one or the other
 page = st.sidebar.radio("", ["Home",
-                             "Business Overview",
+                             #"Business Overview",
                              "Product Insights",
                              "Warehouse Insights"])
 
@@ -36,62 +36,80 @@ def space():
         st.text(' ')
 
 # create sidebar
-st.sidebar.title("Input")
-select = st.sidebar.selectbox('Quantity', ['less than 10', 'bewteen 10 and 15', 'greater than 15'], key='1')
-select = st.sidebar.selectbox('Product', ['Adani Green Energy', 'GMM Pfaudler', 'AGC Networks', 'Alkyl Amines Chem', 'IOL Chem & Pharma'], key='2')
+# st.sidebar.title("Input")
+# select = st.sidebar.selectbox('Quantity', ['less than 10', 'bewteen 10 and 15', 'greater than 15'], key='1')
+# select = st.sidebar.selectbox('Product', ['Adani Green Energy', 'GMM Pfaudler', 'AGC Networks', 'Alkyl Amines Chem', 'IOL Chem & Pharma'], key='2')
 
-st.sidebar.checkbox("Same Day Delivery")
 # Separate all code for each page under their corresponding 'if' statement
 if page == "Home":
     st.markdown('''
-        # Wagonworks Warehouse Analysis
+        # E-Commerce Warehouse Analysis
         ''')
+    st.markdown('''
+    Organise your orders efficiently for the day!
+    - Find out which items customers often buy together
+    - Get lists of your orders for most efficient picking
+    ''')
     # Add a stock warehouse image
-    image = Image.open('warehouse.jpg')
-    st.image(image, caption='Warehouse', width=800)
+    # image = Image.open('warehouse.jpg')
+    # st.image(image, width=400)
+    #space()
+
+    st.header("Step 1: Upload orders for the day")
+    # st.text('some intro about the business and the project')
+    uploaded_file = st.file_uploader('Order Data', type=['csv'])
+    space()
+    st.header('Step 2: Choose parameters')
+
+    st.markdown('Priority Flag')
+    option = st.selectbox('Same day delivery', ['Same day', 'Next day',
+                                                'All'])
+
+    st.markdown('Estimated processing times (in seconds)')
+
+    col1, col2 = st.beta_columns(2)
+    with col1:
+        scan_time = st.text_input('Scan time', 3)
+        confirm_location = st.text_input('Confirm location time', 2)
+        pick_time = st.text_input('Pick time', 8)
+
+    with col2:
+        confirm_pick = st.text_input('Confirm pick time', 2)
+        confirm_box = st.text_input('Confirm box time', 5)
+        sort_time = st.text_input('Sort time per SKU', 20)
+
+    st.header('Step 3: Run')
+    if st.button('Process orders'):
+        # batch_function(uploaded_file)
+    space()
     space()
 
-    st.header("Introduction")
-    st.text('some intro about the business and the project')
-    space()
-    space()
-    st.header("Obejctives")
-    st.text('-  ')
-    st.text('-  ')
-    st.text('-  ')
 
-    space()
-    st.header('Our Tech Stack')
-    space()
-    image = Image.open('../../../Downloads/tech_stack_sample.jpeg').convert('RGB')
-    st.image(image, width=500)
+# if page == "Business Overview":
 
-
-if page == "Business Overview":
-
-    st.header('Business Overview')
-    space()
-    st.button('No of orders per day: 4,377')
-    st.text('')
-    st.button('No of items per order: 3')
-    space()
-    m = st.markdown("""
-    <style>
-    div.stButton > button:first-child {
-        background-color: rgb(255, 240, 229);
-        color: black;
-        font-size: 20px;
-        width: 500px;
-        height: 50px;
-    }
-    </style>""", unsafe_allow_html=True)
+#     st.header('Business Overview')
+#     space()
+#     st.button('No of orders per day: 4,377')
+#     st.text('')
+#     st.button('No of items per order: 3')
+#     space()
+#     m = st.markdown("""
+#     <style>
+#     div.stButton > button:first-child {
+#         background-color: rgb(255, 240, 229);
+#         color: black;
+#         font-size: 20px;
+#         width: 500px;
+#         height: 50px;
+#     }
+#     </style>""", unsafe_allow_html=True)
 
 
     # orders per day graph
-    st.subheader('Orders per day in 2020')
-    orders_per_day = Image.open('orders per day.png')
-    st.image(orders_per_day, width=1000)
-    space()
+    # st.subheader('Orders per day in 2020')
+    # orders_per_day = Image.open('orders per day.png')
+    # st.image(orders_per_day, width=1000)
+    # space()
 
 
 if page == "Product Insights":
@@ -99,6 +117,8 @@ if page == "Product Insights":
     st.markdown('''
         ## Product Insights
         ''')
+
+
 
     product = st.text_input('Input your product here:')
 
@@ -108,14 +128,29 @@ if page == "Product Insights":
 
 if page == "Warehouse Insights":
 
-    st.markdown('''
-    ## Warehouse Insights
-    - Time per order
-    - Batching vs discrete
-    ''')
-
     st.header('Order Batching')
-    uploaded_file = st.file_uploader('Order Data', type=['csv'])
+
+
+    # st.header('Business Overview')
+    # space()
+    # st.button('No of orders per day: 4,377')
+    # st.text('')
+    # st.button('No of items per order: 3')
+    # space()
+    # m = st.markdown("""
+    # <style>
+    # div.stButton > button:first-child {
+    #     background-color: rgb(255, 240, 229);
+    #     color: black;
+    #     font-size: 20px;
+    #     width: 500px;
+    #     height: 50px;
+    # }
+    # </style>""", unsafe_allow_html=True)
+    # space()
+
+
+    # uploaded_file = st.file_uploader('Order Data', type=['csv'])
 
     #if uploaded_file:
         # action
