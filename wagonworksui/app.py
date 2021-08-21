@@ -11,11 +11,12 @@ import base64
 import pandas as pd
 from scipy.spatial.distance import euclidean
 from sklearn.cluster import KMeans
-from tensorflow.keras.preprocessing.text import text_to_word_sequence
+# from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from gensim.models import Word2Vec
 from get_data import get_month_data
 import streamlit as st
 from PIL import Image
+from order_pool import
 
 # Create a page dropdown
 st.sidebar.title("Menu")
@@ -27,8 +28,8 @@ st.sidebar.title("Menu")
 # Create a page 'radio' - probably best to just choose one or the other
 page = st.sidebar.radio("", ["Home",
                              #"Business Overview",
-                             "Product Insights",
-                             "Warehouse Insights"])
+                             "Warehouse Insights",
+                             "Product Insights"])
 
 # function for creating space between block of contents
 def space():
@@ -54,35 +55,6 @@ if page == "Home":
     # image = Image.open('warehouse.jpg')
     # st.image(image, width=400)
     #space()
-
-    st.header("Step 1: Upload orders for the day")
-    # st.text('some intro about the business and the project')
-    uploaded_file = st.file_uploader('Order Data', type=['csv'])
-    space()
-    st.header('Step 2: Choose parameters')
-
-    st.markdown('Priority Flag')
-    option = st.selectbox('Same day delivery', ['Same day', 'Next day',
-                                                'All'])
-
-    st.markdown('Estimated processing times (in seconds)')
-
-    col1, col2 = st.beta_columns(2)
-    with col1:
-        scan_time = st.text_input('Scan time', 3)
-        confirm_location = st.text_input('Confirm location time', 2)
-        pick_time = st.text_input('Pick time', 8)
-
-    with col2:
-        confirm_pick = st.text_input('Confirm pick time', 2)
-        confirm_box = st.text_input('Confirm box time', 5)
-        sort_time = st.text_input('Sort time per SKU', 20)
-
-    st.header('Step 3: Run')
-    if st.button('Process orders'):
-        # batch_function(uploaded_file)
-    space()
-    space()
 
 
 # if page == "Business Overview":
@@ -112,25 +84,78 @@ if page == "Home":
     # space()
 
 
+if page == "Warehouse Insights":
+
+    st.header('Order Batching')
+
+    st.header("Step 1: Upload orders for the day")
+    # st.text('some intro about the business and the project')
+    uploaded_file = st.file_uploader('Order Data', type=['csv'])
+    space()
+    st.header('Step 2: Choose parameters')
+
+    st.markdown('Priority Flag')
+    option = st.selectbox('Same day delivery', ['Same day', 'Next day',
+                                                'All'])
+
+    st.markdown('Estimated processing times (in seconds)')
+
+    col1, col2 = st.beta_columns(2)
+    with col1:
+        scan_time = st.text_input('Scan time', 3)
+        confirm_location = st.text_input('Confirm location time', 2)
+        pick_time = st.text_input('Pick time', 8)
+
+    with col2:
+        confirm_pick = st.text_input('Confirm pick time', 2)
+        confirm_box = st.text_input('Confirm box time', 5)
+        sort_time = st.text_input('Sort time per SKU', 20)
+
+    st.header('Step 3: Run')
+    # if st.button('Process orders'):
+    #     # batch_function(uploaded_file)
+    # space()
+    # space()
+
 if page == "Product Insights":
     # Display details of page 1
     st.markdown('''
         ## Product Insights
         ''')
 
-
+    st.header("Step 1: Upload the dataset")
+        # st.text('some intro about the business and the project')
+    uploaded_file = st.file_uploader('Order Data', type=['csv'])
+    space()
+    st.header('Step 2: Choose parameters')
 
     product = st.text_input('Input your product here:')
 
     if product:
         st.write(purchased_together('ZJBTISS52650'))
 
+    # st.markdown('Priority Flag')
+    # option = st.selectbox('Same day delivery', ['Same day', 'Next day',
+                                                # 'All'])
 
-if page == "Warehouse Insights":
+    # st.markdown('Estimated processing times (in seconds)')
 
-    st.header('Order Batching')
+    # col1, col2 = st.beta_columns(2)
+    # with col1:
+    #     scan_time = st.text_input('Scan time', 3)
+    #     confirm_location = st.text_input('Confirm location time', 2)
+    #     pick_time = st.text_input('Pick time', 8)
 
+    # with col2:
+    #     confirm_pick = st.text_input('Confirm pick time', 2)
+    #     confirm_box = st.text_input('Confirm box time', 5)
+    #     sort_time = st.text_input('Sort time per SKU', 20)
 
+    st.header('Step 3: Run')
+    # if st.button('Process orders'):
+    #     # batch_function(uploaded_file)
+    # space()
+    # space(
     # st.header('Business Overview')
     # space()
     # st.button('No of orders per day: 4,377')
@@ -184,6 +209,35 @@ if page == "Warehouse Insights":
     if st.button('Download Dataframe as CSV'):
       tmp_download_link = download_link(df, 'YOUR_DF.csv', 'Click here to download your data!')
       st.markdown(tmp_download_link, unsafe_allow_html=True)
+
+    st.header('Demonstration')
+
+    df = pd.read_csv('../raw_data/centroid_df.csv')
+
+    fig = px.scatter(df, x='x', y='y', size='Size',
+                     color='Group',
+                     #symbol_map=[1, 2, 3, 4],
+                     hover_name="Grouped Items",
+                     hover_data={'Grouped Items': False,
+                                 'y': False,
+                                'Group': False,
+                                'Size': False},
+                     log_x=False,
+                     size_max=80,
+                     labels={'x': '', 'y': ''},
+                     title="Top 5 groups of items repeatedly bought together")
+
+    fig.update_layout(plot_bgcolor='white')
+    fig.update_xaxes(visible=False, showgrid=False)
+    fig.update_yaxes(visible=False, showgrid=False)
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor="white",
+            font_size=14,
+            font_family="Helvetica"
+        )
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
 
     chart1, chart2 = st.columns(2)
