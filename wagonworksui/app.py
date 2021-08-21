@@ -16,7 +16,7 @@ from gensim.models import Word2Vec
 from get_data import get_month_data
 import streamlit as st
 from PIL import Image
-from order_pool import
+from order_pool import order_pool_ui
 
 # Create a page dropdown
 st.sidebar.title("Menu")
@@ -92,6 +92,10 @@ if page == "Warehouse Insights":
     # st.text('some intro about the business and the project')
     uploaded_file = st.file_uploader('Order Data', type=['csv'])
     space()
+
+    if uploaded_file:
+        order_pool_ui(uploaded_file)
+
     st.header('Step 2: Choose parameters')
 
     st.markdown('Priority Flag')
