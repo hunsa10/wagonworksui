@@ -23,7 +23,7 @@ def order_pool_ui(csv):
     # format date columns
     single_df.loc[:,'Del_Creat_Time'] = format_time(single_df, time_col = 'Del_Creat_Time')
 
-    # creating a loop variable to drop done orders
+    # creating a loop vgariable to drop done orders
     loop_dataframe = single_df.copy()
     orders_list = []
 
@@ -44,6 +44,7 @@ def order_pool_ui(csv):
         #create list of dataframes to be sent to batch
         loop_dataframe.drop(hour_df_index, axis = 0, inplace = True)
         hour_df.reset_index(drop = True, inplace = True)
+        hour_df.rename(columns={'SKU_A':'SKU', 'Del_NumA': 'Del_Number'}, inplace=True)
         orders_list.append(hour_df)
 
     return orders_list
