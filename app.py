@@ -216,7 +216,7 @@ if page == "Product Insights":
 
     st.header('Demonstration')
 
-    df = pd.read_csv('../raw_data/centroid_df.csv')
+    df = pd.read_csv('raw_data/centroid_df.csv')
 
     fig = px.scatter(df, x='x', y='y', size='Size',
                      color='Group',

@@ -11,6 +11,7 @@ scikit-learn
 gensim
 scipy
 plotly
+matplotlib
 
 # tests/linter
 black
