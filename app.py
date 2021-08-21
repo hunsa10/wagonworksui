@@ -13,10 +13,10 @@ from scipy.spatial.distance import euclidean
 from sklearn.cluster import KMeans
 # from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from gensim.models import Word2Vec
-from get_data import get_month_data
+# from get_data import get_month_data
 import streamlit as st
 from PIL import Image
-from order_pool import order_pool_ui
+from wagonworksui.order_pool import order_pool_ui
 
 # Create a page dropdown
 st.sidebar.title("Menu")
