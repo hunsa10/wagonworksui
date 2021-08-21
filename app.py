@@ -15,7 +15,6 @@ from sklearn.cluster import KMeans
 from gensim.models import Word2Vec
 # from get_data import get_month_data
 import streamlit as st
-from PIL import Image
 from wagonworksui.order_pool import order_pool_ui
 
 # Create a page dropdown
@@ -244,21 +243,21 @@ if page == "Product Insights":
     st.plotly_chart(fig, use_container_width=True)
 
 
-    chart1, chart2 = st.columns(2)
+    # chart1, chart2 = st.columns(2)
 
-    with chart1:
-        st.markdown('Orders per hour')
-        chart_data = pd.DataFrame(np.random.randn(20, 3),columns=['a', 'b', 'c'])
-        st.line_chart(chart_data)
-
-
-    with chart2:
-        st.markdown('Average picking time')
-        chart_data = pd.DataFrame(np.random.randn(2000, 3),columns=['a', 'b', 'c'])
-        st.line_chart(chart_data)
+    # with chart1:
+    #     st.markdown('Orders per hour')
+    #     chart_data = pd.DataFrame(np.random.randn(20, 3),columns=['a', 'b', 'c'])
+    #     st.line_chart(chart_data)
 
 
-    st.subheader('Order Batching')
-    chart_data = pd.DataFrame(np.random.randn(2000, 3),columns=['a', 'b', 'c'])
-    st.line_chart(chart_data)
+    # with chart2:
+    #     st.markdown('Average picking time')
+    #     chart_data = pd.DataFrame(np.random.randn(2000, 3),columns=['a', 'b', 'c'])
+    #     st.line_chart(chart_data)
+
+
+    # st.subheader('Order Batching')
+    # chart_data = pd.DataFrame(np.random.randn(2000, 3),columns=['a', 'b', 'c'])
+    # st.line_chart(chart_data)
 
