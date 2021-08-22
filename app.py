@@ -16,6 +16,7 @@ from gensim.models import Word2Vec
 # from get_data import get_month_data
 import streamlit as st
 from wagonworksui.order_pool import order_pool_ui
+import requests
 
 # Create a page dropdown
 st.sidebar.title("Menu")
@@ -72,7 +73,7 @@ if page == "Warehouse Insights":
 
     response = requests.post(api_url, json=data_dict).json()
 
-    st.write(f'Time saved is: ${round(response['Time_saved'], 2)}')
+    st.write(f'Time saved is: ${round(response["Time_saved"], 2)}')
 
     st.write(f"{response['Fastest_method']} picking was the fastest method found taking \
     {response['Best_time_result'] // (60*60)} hour and {round(response['Best_time_result'] % (60*60) / 60)} mins")
@@ -126,54 +127,16 @@ if page == "Product Insights":
 
     product = st.text_input('Input your product here:')
 
-    if product:
-        st.write(purchased_together('ZJBTISS52650'))
+    # if product:
+    #     st.write(purchased_together('ZJBTISS52650'))
 
-    # st.markdown('Priority Flag')
-    # option = st.selectbox('Same day delivery', ['Same day', 'Next day',
-                                                # 'All'])
-
-    # st.markdown('Estimated processing times (in seconds)')
-
-    # col1, col2 = st.beta_columns(2)
-    # with col1:
-    #     scan_time = st.text_input('Scan time', 3)
-    #     confirm_location = st.text_input('Confirm location time', 2)
-    #     pick_time = st.text_input('Pick time', 8)
-
-    # with col2:
-    #     confirm_pick = st.text_input('Confirm pick time', 2)
-    #     confirm_box = st.text_input('Confirm box time', 5)
-    #     sort_time = st.text_input('Sort time per SKU', 20)
 
     st.header('Step 3: Run')
-    # if st.button('Process orders'):
-    #     # batch_function(uploaded_file)
-    # space()
-    # space(
-    # st.header('Business Overview')
-    # space()
-    # st.button('No of orders per day: 4,377')
-    # st.text('')
-    # st.button('No of items per order: 3')
-    # space()
-    # m = st.markdown("""
-    # <style>
-    # div.stButton > button:first-child {
-    #     background-color: rgb(255, 240, 229);
-    #     color: black;
-    #     font-size: 20px;
-    #     width: 500px;
-    #     height: 50px;
-    # }
-    # </style>""", unsafe_allow_html=True)
-    # space()
 
+    if st.button('Run'):
+        space()
+        st.write(":smile:")
 
-    # uploaded_file = st.file_uploader('Order Data', type=['csv'])
-
-    #if uploaded_file:
-        # action
 
     def download_link(object_to_download, download_filename, download_link_text):
         """
@@ -198,8 +161,8 @@ if page == "Product Insights":
 
 
     # Examples
-    df = pd.DataFrame({'x': list(range(10)), 'y': list(range(10))})
-    st.write(df)
+    # df = pd.DataFrame({'x': list(range(10)), 'y': list(range(10))})
+    # st.write(df)
 
     if st.button('Download Dataframe as CSV'):
       tmp_download_link = download_link(df, 'YOUR_DF.csv', 'Click here to download your data!')
