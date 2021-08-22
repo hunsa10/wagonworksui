@@ -50,38 +50,8 @@ if page == "Home":
     - Find out which items customers often buy together
     - Get lists of your orders for most efficient picking
     ''')
-    # Add a stock warehouse image
-    # image = Image.open('warehouse.jpg')
-    # st.image(image, width=400)
-    #space()
 
-
-# if page == "Business Overview":
-
-#     st.header('Business Overview')
-#     space()
-#     st.button('No of orders per day: 4,377')
-#     st.text('')
-#     st.button('No of items per order: 3')
-#     space()
-#     m = st.markdown("""
-#     <style>
-#     div.stButton > button:first-child {
-#         background-color: rgb(255, 240, 229);
-#         color: black;
-#         font-size: 20px;
-#         width: 500px;
-#         height: 50px;
-#     }
-#     </style>""", unsafe_allow_html=True)
-
-
-    # orders per day graph
-    # st.subheader('Orders per day in 2020')
-    # orders_per_day = Image.open('orders per day.png')
-    # st.image(orders_per_day, width=1000)
-    # space()
-
+#upload warehouse orders and get the pool
 
 if page == "Warehouse Insights":
 
@@ -93,7 +63,28 @@ if page == "Warehouse Insights":
     space()
 
     if uploaded_file:
-        order_pool_ui(uploaded_file)
+        pool_result = order_pool_ui(uploaded_file)
+
+    #convert data into a list of dictionaries
+    data_dict=pool_result.to_dict(orient='records')
+
+    api_url = 'https://wagonworks-api-dsvsmf3mja-de.a.run.app/warehouse'
+
+    response = requests.post(api_url, json=data_dict).json()
+
+    st.write(f'Time saved is: ${round(response['Time_saved'], 2)}')
+
+    st.write(f"{response['Fastest_method']} picking was the fastest method found taking \
+    {response['Best_time_result'] // (60*60)} hour and {round(response['Best_time_result'] % (60*60) / 60)} mins")
+
+    dollar_input = 40
+    st.write(f"This is a cost of ${round(response['Best_time_result'] * 0.01111111111111111, 2)} at ${str(dollar_input)} an hour")
+
+    batch_labels = pd.DataFrame(response['Order_labels'])
+
+    batch_labels.head()
+
+    # choose parameters to order batching
 
     st.header('Step 2: Choose parameters')
 
@@ -116,6 +107,7 @@ if page == "Warehouse Insights":
 
     st.header('Step 3: Run')
     if st.button('Run'):
+        space()
         st.write(":smile:")
     # space()
     # space()
