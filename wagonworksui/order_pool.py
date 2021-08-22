@@ -47,6 +47,7 @@ def order_pool_ui(csv):
         #create list of dataframes to be sent to batch
         loop_dataframe.drop(hour_df_index, axis = 0, inplace = True)
         hour_df.reset_index(drop = True, inplace = True)
+        hour_df = hour_df[["Del_NumA", "SKU_A", "Act_Goods_Issue_Qty_SKU"]]
         hour_df.rename(columns={'SKU_A':'SKU', 'Del_NumA': 'Del_Number'}, inplace=True)
         orders_list.append(hour_df)
 

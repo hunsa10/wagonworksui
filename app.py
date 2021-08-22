@@ -18,6 +18,10 @@ import streamlit as st
 from wagonworksui.order_pool import order_pool_ui
 import requests
 
+#changing page icon
+st.set_page_config(page_title='Warehouse App')
+
+
 # Create a page dropdown
 st.sidebar.title("Menu")
 
@@ -59,40 +63,18 @@ if page == "Warehouse Insights":
     st.header('Order Batching')
 
     st.header("Step 1: Upload orders for the day")
-    # st.text('some intro about the business and the project')
+    space()
     uploaded_file = st.file_uploader('Order Data', type=['csv'])
     space()
-
-    if uploaded_file:
-        pool_result = order_pool_ui(uploaded_file)
-
-    #convert data into a list of dictionaries
-    data_dict=pool_result.to_dict(orient='records')
-
-    api_url = 'https://wagonworks-api-dsvsmf3mja-de.a.run.app/warehouse'
-
-    response = requests.post(api_url, json=data_dict).json()
-
-    st.write(f'Time saved is: ${round(response["Time_saved"], 2)}')
-
-    st.write(f"{response['Fastest_method']} picking was the fastest method found taking \
-    {response['Best_time_result'] // (60*60)} hour and {round(response['Best_time_result'] % (60*60) / 60)} mins")
-
-    dollar_input = 40
-    st.write(f"This is a cost of ${round(response['Best_time_result'] * 0.01111111111111111, 2)} at ${str(dollar_input)} an hour")
-
-    batch_labels = pd.DataFrame(response['Order_labels'])
-
-    batch_labels.head()
 
     # choose parameters to order batching
 
     st.header('Step 2: Choose parameters')
-
+    space()
     st.markdown('Priority Flag')
     option = st.selectbox('Same day delivery', ['Same day', 'Next day',
                                                 'All'])
-
+    space()
     st.markdown('Estimated processing times (in seconds)')
 
     col1, col2 = st.columns(2)
@@ -106,12 +88,43 @@ if page == "Warehouse Insights":
         confirm_box = st.text_input('Confirm box time', 5)
         sort_time = st.text_input('Sort time per SKU', 20)
 
+
+    # Run the batching model
+
     st.header('Step 3: Run')
+    space()
     if st.button('Run'):
         space()
-        st.write(":smile:")
-    # space()
-    # space()
+
+        if uploaded_file:
+
+            # uploaded_file_df = pd.read_csv(uploaded_file)
+
+            pool_result = order_pool_ui(uploaded_file)[2]
+
+            #convert data into a list of dictionaries
+            data_dict= pool_result.to_dict(orient='records')
+
+            api_url = f'https://wagonworks-api-dsvsmf3mja-de.a.run.app/warehouse?sort_time={sort_time}&scan_time={scan_time}&confirm_location={confirm_location}&pick_time={pick_time}&confirm_pick={confirm_pick}&confirm_box={confirm_box}'
+
+            response = requests.post(api_url, json=data_dict).json()
+
+            st.write(f'Time saved is {round(response["Time_saved"], 2)}')
+
+            st.write(f"{response['Fastest_method'].capitalize()} picking was the fastest method found taking \
+            {response['Best_time_result'] // (60*60)} hour and {round(response['Best_time_result'] % (60*60) / 60)} mins")
+
+            dollar_input = 40
+            st.write(f"This is a cost of ${round(response['Best_time_result'] * 0.01111111111111111, 2)} at ${str(dollar_input)} an hour")
+
+            batch_labels = pd.DataFrame(response['Order_labels'])
+
+            batch_labels.head()
+
+        else:
+            st.write("Please upload a csv file")
+
+# Product insights model
 
 if page == "Product Insights":
     # Display details of page 1
