@@ -103,7 +103,7 @@ if page == "Warehouse Insights":
 
     st.markdown('Estimated processing times (in seconds)')
 
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     with col1:
         scan_time = st.text_input('Scan time', 3)
         confirm_location = st.text_input('Confirm location time', 2)
@@ -115,8 +115,8 @@ if page == "Warehouse Insights":
         sort_time = st.text_input('Sort time per SKU', 20)
 
     st.header('Step 3: Run')
-    # if st.button('Process orders'):
-    #     # batch_function(uploaded_file)
+    if st.button('Run'):
+        st.write(":smile:")
     # space()
     # space()
 
