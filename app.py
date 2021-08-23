@@ -18,8 +18,9 @@ import streamlit as st
 from wagonworksui.order_pool import order_pool_ui
 import requests
 
-#changing page icon
-st.set_page_config(page_title='Warehouse App')
+#changing app name and icon
+img = Image.open('download.jpg')
+st.set_page_config(page_title='Warehouse App', page_icon=img)
 
 
 # Create a page dropdown
@@ -50,6 +51,7 @@ if page == "Home":
     st.markdown('''
         # E-Commerce Warehouse Analysis
         ''')
+    space()
     st.markdown('''
     Organise your orders efficiently for the day!
     - Find out which items customers often buy together
