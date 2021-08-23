@@ -51,6 +51,9 @@ if page == "Home":
     - Find out which items customers often buy together
     - Get lists of your orders for most efficient picking
     ''')
+    big_space()
+    img2 = Image.open("image_ware.jpg")
+    st.image(img2)
 
 #upload warehouse orders and get the pool
 
