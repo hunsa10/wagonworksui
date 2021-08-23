@@ -31,7 +31,7 @@ page = st.sidebar.radio("", ["Home",
                              "Warehouse Insights",
                              "Product Insights"])
 
-# defining functions space
+# defining functions for the app:
 def big_space():
     for i in range(3):
         st.text(' ')
@@ -70,8 +70,8 @@ if page == "Home":
     big_space()
     st.markdown('''
     Organise your orders efficiently for the day!
-    - Find out which items customers often buy together
     - Get lists of your orders for most efficient picking
+    - Find out which items customers often buy together
     ''')
     big_space()
     img2 = Image.open("image_ware.jpg")
@@ -82,15 +82,20 @@ if page == "Home":
 if page == "Warehouse Insights":
 
     st.title('Order Batching')
-
-    st.header("Step 1: Upload orders for the day")
+    st.markdown('''
+    Get lists of your orders for most efficient picking
+    ''')
+    big_space()
+    st.subheader("Step 1: Upload orders for the day")
     small_space()
-    uploaded_file = st.file_uploader('Order Data', type=['csv'])
+    uploaded_file = st.file_uploader('Orders Data', type=['csv'])
+    if uploaded_file:
+        st.write(pd.DataFrame(uploaded_file).head())
     small_space()
 
     # choose parameters to order batching
 
-    st.header('Step 2: Choose parameters')
+    st.subheader('Step 2: Choose parameters')
     small_space()
     st.markdown('Priority Flag')
     option = st.selectbox('Same day delivery', ['Same day', 'Next day',
@@ -98,7 +103,7 @@ if page == "Warehouse Insights":
     small_space()
     st.markdown('Estimated processing times (in seconds)')
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.beta_columns(2)
     with col1:
         scan_time = st.text_input('Scan time', 3)
         confirm_location = st.text_input('Confirm location time', 2)
@@ -112,7 +117,7 @@ if page == "Warehouse Insights":
 
     # Run the batching model
 
-    st.header('Step 3: Run')
+    st.subheader('Step 3: Run the model')
     small_space()
     if st.button('Run'):
         small_space()
@@ -152,50 +157,110 @@ if page == "Warehouse Insights":
 if page == "Product Insights":
     # Display details of page 1
     st.title('Product Insights')
+    st.markdown('''
+    Find out which items customers often buy together
+    ''')
     big_space()
 
-    st.header("Step 1: Upload the dataset")
+    #product groups
+    st.header('Product clusters')
+    small_space()
+    st.subheader("Step 1: Upload the dataset")
         # st.text('some intro about the business and the project')
     uploaded_file = st.file_uploader('Order Data', type=['csv'])
-    small_space()
-    st.header('Step 2: Choose a SKU')
 
-    product = st.text_input('Input your product here:')
-
-    small_space()
-    st.header('Step 3: Run')
-
-    if st.button('Run'):
+    if uploaded_file:
+        st.write(pd.DataFrame(uploaded_file).head())
         small_space()
 
-#simulation for the presentation
+    st.subheader('Step 2: Analyse groups of products')
+
+    if st.button('Graph'):
+        small_space()
+
+        df = pd.read_csv('data/centroid_df.csv')
+
+        fig = px.scatter(df, x='x', y='y', size='Size',
+                         color='Group',
+                         #symbol_map=[1, 2, 3, 4],
+                         hover_name="Grouped Items",
+                         hover_data={'Grouped Items': False,
+                                     'y': False,
+                                    'Group': False,
+                                    'Size': False},
+                         log_x=False,
+                         size_max=80,
+                         labels={'x': '', 'y': ''},
+                         title="Top 5 groups of items repeatedly bought together")
+
+        fig.update_layout(plot_bgcolor='white')
+        fig.update_xaxes(visible=False, showgrid=False)
+        fig.update_yaxes(visible=False, showgrid=False)
+        fig.update_layout(
+            hoverlabel=dict(
+                bgcolor="white",
+                font_size=14,
+                font_family="Helvetica"
+                )
+            )
+        st.plotly_chart(fig, use_container_width=True)
+
+    # else:
+    #     st.write("Please upload a csv file")
+
+    #Products frequently bought together per sku
     big_space()
-    st.header('Demonstration')
+    st.header('Products purchased together per SKU')
+    small_space()
+    st.subheader('Step 1: Choose a SKU')
 
-    df = pd.read_csv('data/centroid_df.csv')
+    product = st.text_input('Input the SKU of your product here:')
 
-    fig = px.scatter(df, x='x', y='y', size='Size',
-                     color='Group',
-                     #symbol_map=[1, 2, 3, 4],
-                     hover_name="Grouped Items",
-                     hover_data={'Grouped Items': False,
-                                 'y': False,
-                                'Group': False,
-                                'Size': False},
-                     log_x=False,
-                     size_max=80,
-                     labels={'x': '', 'y': ''},
-                     title="Top 5 groups of items repeatedly bought together")
+    small_space()
+    st.subheader('Step 2: Show list of SKUs')
 
-    fig.update_layout(plot_bgcolor='white')
-    fig.update_xaxes(visible=False, showgrid=False)
-    fig.update_yaxes(visible=False, showgrid=False)
-    fig.update_layout(
-        hoverlabel=dict(
-            bgcolor="white",
-            font_size=14,
-            font_family="Helvetica"
-        )
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    if st.button('List'):
+        product_df = pd.DataFrame({'Product_SKU': ['ZBI13AS39932',
+                                       'ZST3WP444007',
+                                       'ZSPQ12R42525',
+                                       'ZEN900034005',
+                                       'ZJBR0A454225',
+                                       'ZSM41BE13555',
+                                       'ZJBCPE24843',
+                                       'ZES55KT15592',
+                                       'ZEN90006816',
+                                       'ZMEGSTA50658'] })
+        st.write(product_df)
+
+
+#simulation for the presentation
+    # big_space()
+    # st.header('Demonstration')
+
+    # df = pd.read_csv('data/centroid_df.csv')
+
+    # fig = px.scatter(df, x='x', y='y', size='Size',
+    #                  color='Group',
+    #                  #symbol_map=[1, 2, 3, 4],
+    #                  hover_name="Grouped Items",
+    #                  hover_data={'Grouped Items': False,
+    #                              'y': False,
+    #                             'Group': False,
+    #                             'Size': False},
+    #                  log_x=False,
+    #                  size_max=80,
+    #                  labels={'x': '', 'y': ''},
+    #                  title="Top 5 groups of items repeatedly bought together")
+
+    # fig.update_layout(plot_bgcolor='white')
+    # fig.update_xaxes(visible=False, showgrid=False)
+    # fig.update_yaxes(visible=False, showgrid=False)
+    # fig.update_layout(
+    #     hoverlabel=dict(
+    #         bgcolor="white",
+    #         font_size=14,
+    #         font_family="Helvetica"
+    #     )
+    # )
+    # st.plotly_chart(fig, use_container_width=True)
 
