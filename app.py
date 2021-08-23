@@ -31,7 +31,7 @@ page = st.sidebar.radio("", ["Home",
                              "Warehouse Insights",
                              "Product Insights"])
 
-# function for creating space between block of contents
+# defining functions space
 def big_space():
     for i in range(3):
         st.text(' ')
@@ -40,10 +40,32 @@ def small_space():
     for i in range(1):
         st.text(' ')
 
+def download_link(object_to_download, download_filename, download_link_text):
+    """
+    Generates a link to download the given object_to_download.
+
+    object_to_download (str, pd.DataFrame):  The object to be downloaded.
+    download_filename (str): filename and extension of file. e.g. mydata.csv, some_txt_output.txt
+    download_link_text (str): Text to display for download link.
+
+    Examples:
+    download_link(YOUR_DF, 'YOUR_DF.csv', 'Click here to download data!')
+    download_link(YOUR_STRING, 'YOUR_STRING.txt', 'Click here to download your text!')
+
+    """
+    if isinstance(object_to_download,pd.DataFrame):
+        object_to_download = object_to_download.to_csv(index=False)
+
+        # some strings <-> bytes conversions necessary here
+    b64 = base64.b64encode(object_to_download.encode()).decode()
+
+    return f'<a href="data:file/txt;base64,{b64}" download="{download_filename}">{download_link_text}</a>'
+
+
 # Separate all code for each page under their corresponding 'if' statement
 if page == "Home":
     st.markdown('''
-        # E-Commerce Warehouse Analysis
+        # E-Commerce Warehouse Optimization
         ''')
     big_space()
     st.markdown('''
@@ -99,7 +121,7 @@ if page == "Warehouse Insights":
 
             # uploaded_file_df = pd.read_csv(uploaded_file)
 
-            pool_result = order_pool_ui(uploaded_file)[2]
+            pool_result = order_pool_ui(uploaded_file)[0]
 
             #convert data into a list of dictionaries
             data_dict= pool_result.to_dict(orient='records')
@@ -118,7 +140,9 @@ if page == "Warehouse Insights":
 
             batch_labels = pd.DataFrame(response['Order_labels'])
 
-            batch_labels.head()
+            # show csv to be downloaded
+            tmp_download_link = download_link(batch_labels, 'batching_result.csv', 'Click here to download your data!')
+            st.markdown(tmp_download_link, unsafe_allow_html=True)
 
         else:
             st.write("Please upload a csv file")
@@ -134,10 +158,9 @@ if page == "Product Insights":
         # st.text('some intro about the business and the project')
     uploaded_file = st.file_uploader('Order Data', type=['csv'])
     small_space()
-    st.header('Step 2: Choose parameters')
+    st.header('Step 2: Choose a SKU')
 
     product = st.text_input('Input your product here:')
-
 
     small_space()
     st.header('Step 3: Run')
@@ -145,34 +168,7 @@ if page == "Product Insights":
     if st.button('Run'):
         small_space()
 
-
-    def download_link(object_to_download, download_filename, download_link_text):
-        """
-        Generates a link to download the given object_to_download.
-
-        object_to_download (str, pd.DataFrame):  The object to be downloaded.
-        download_filename (str): filename and extension of file. e.g. mydata.csv, some_txt_output.txt
-        download_link_text (str): Text to display for download link.
-
-        Examples:
-        download_link(YOUR_DF, 'YOUR_DF.csv', 'Click here to download data!')
-        download_link(YOUR_STRING, 'YOUR_STRING.txt', 'Click here to download your text!')
-
-        """
-        if isinstance(object_to_download,pd.DataFrame):
-            object_to_download = object_to_download.to_csv(index=False)
-
-            # some strings <-> bytes conversions necessary here
-        b64 = base64.b64encode(object_to_download.encode()).decode()
-
-        return f'<a href="data:file/txt;base64,{b64}" download="{download_filename}">{download_link_text}</a>'
-
 #simulation for the presentation
-    small_space()
-    if st.button('Download Result as CSV'):
-      tmp_download_link = download_link(df, 'YOUR_DF.csv', 'Click here to download your data!')
-      st.markdown(tmp_download_link, unsafe_allow_html=True)
-
     big_space()
     st.header('Demonstration')
 
