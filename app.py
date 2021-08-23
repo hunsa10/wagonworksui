@@ -26,32 +26,26 @@ st.set_page_config(page_title='Warehouse App', page_icon=img)
 # Create a page dropdown
 st.sidebar.title("Menu")
 
-# page = st.sidebar.selectbox("", ["Home",
-#                                  "Product Insights"
-#                                  "Warehouse Insights"])
-
 # Create a page 'radio' - probably best to just choose one or the other
 page = st.sidebar.radio("", ["Home",
-                             #"Business Overview",
                              "Warehouse Insights",
                              "Product Insights"])
 
 # function for creating space between block of contents
-def space():
+def big_space():
     for i in range(3):
         st.text(' ')
 
-# create sidebar
-# st.sidebar.title("Input")
-# select = st.sidebar.selectbox('Quantity', ['less than 10', 'bewteen 10 and 15', 'greater than 15'], key='1')
-# select = st.sidebar.selectbox('Product', ['Adani Green Energy', 'GMM Pfaudler', 'AGC Networks', 'Alkyl Amines Chem', 'IOL Chem & Pharma'], key='2')
+def small_space():
+    for i in range(1):
+        st.text(' ')
 
 # Separate all code for each page under their corresponding 'if' statement
 if page == "Home":
     st.markdown('''
         # E-Commerce Warehouse Analysis
         ''')
-    space()
+    big_space()
     st.markdown('''
     Organise your orders efficiently for the day!
     - Find out which items customers often buy together
@@ -62,21 +56,21 @@ if page == "Home":
 
 if page == "Warehouse Insights":
 
-    st.header('Order Batching')
+    st.title('Order Batching')
 
     st.header("Step 1: Upload orders for the day")
-    space()
+    small_space()
     uploaded_file = st.file_uploader('Order Data', type=['csv'])
-    space()
+    small_space()
 
     # choose parameters to order batching
 
     st.header('Step 2: Choose parameters')
-    space()
+    small_space()
     st.markdown('Priority Flag')
     option = st.selectbox('Same day delivery', ['Same day', 'Next day',
                                                 'All'])
-    space()
+    small_space()
     st.markdown('Estimated processing times (in seconds)')
 
     col1, col2 = st.columns(2)
@@ -94,9 +88,9 @@ if page == "Warehouse Insights":
     # Run the batching model
 
     st.header('Step 3: Run')
-    space()
+    small_space()
     if st.button('Run'):
-        space()
+        small_space()
 
         if uploaded_file:
 
@@ -130,27 +124,23 @@ if page == "Warehouse Insights":
 
 if page == "Product Insights":
     # Display details of page 1
-    st.markdown('''
-        ## Product Insights
-        ''')
+    st.title('Product Insights')
+    big_space()
 
     st.header("Step 1: Upload the dataset")
         # st.text('some intro about the business and the project')
     uploaded_file = st.file_uploader('Order Data', type=['csv'])
-    space()
+    small_space()
     st.header('Step 2: Choose parameters')
 
     product = st.text_input('Input your product here:')
 
-    # if product:
-    #     st.write(purchased_together('ZJBTISS52650'))
 
-
+    small_space()
     st.header('Step 3: Run')
 
     if st.button('Run'):
-        space()
-        st.write(":smile:")
+        small_space()
 
 
     def download_link(object_to_download, download_filename, download_link_text):
@@ -174,15 +164,13 @@ if page == "Product Insights":
 
         return f'<a href="data:file/txt;base64,{b64}" download="{download_filename}">{download_link_text}</a>'
 
-
-    # Examples
-    # df = pd.DataFrame({'x': list(range(10)), 'y': list(range(10))})
-    # st.write(df)
-
-    if st.button('Download Dataframe as CSV'):
+#simulation for the presentation
+    small_space()
+    if st.button('Download Result as CSV'):
       tmp_download_link = download_link(df, 'YOUR_DF.csv', 'Click here to download your data!')
       st.markdown(tmp_download_link, unsafe_allow_html=True)
 
+    big_space()
     st.header('Demonstration')
 
     df = pd.read_csv('data/centroid_df.csv')
@@ -211,23 +199,4 @@ if page == "Product Insights":
         )
     )
     st.plotly_chart(fig, use_container_width=True)
-
-
-    # chart1, chart2 = st.columns(2)
-
-    # with chart1:
-    #     st.markdown('Orders per hour')
-    #     chart_data = pd.DataFrame(np.random.randn(20, 3),columns=['a', 'b', 'c'])
-    #     st.line_chart(chart_data)
-
-
-    # with chart2:
-    #     st.markdown('Average picking time')
-    #     chart_data = pd.DataFrame(np.random.randn(2000, 3),columns=['a', 'b', 'c'])
-    #     st.line_chart(chart_data)
-
-
-    # st.subheader('Order Batching')
-    # chart_data = pd.DataFrame(np.random.randn(2000, 3),columns=['a', 'b', 'c'])
-    # st.line_chart(chart_data)
 
