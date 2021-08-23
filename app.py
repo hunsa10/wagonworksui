@@ -103,7 +103,7 @@ if page == "Warehouse Insights":
     small_space()
     st.markdown('Estimated processing times (in seconds)')
 
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     with col1:
         scan_time = st.text_input('Scan time', 3)
         confirm_location = st.text_input('Confirm location time', 2)
