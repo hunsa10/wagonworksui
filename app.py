@@ -89,8 +89,8 @@ if page == "Warehouse Insights":
     st.subheader("Step 1: Upload orders for the day")
     small_space()
     uploaded_file = st.file_uploader('Orders Data', type=['csv'])
-    if uploaded_file:
-        st.write(pd.DataFrame(uploaded_file).head())
+    # if uploaded_file:
+    #     st.write(pd.DataFrame(uploaded_file).head())
     small_space()
 
     # choose parameters to order batching
@@ -113,7 +113,6 @@ if page == "Warehouse Insights":
         confirm_pick = st.text_input('Confirm pick time', 2)
         confirm_box = st.text_input('Confirm box time', 5)
         sort_time = st.text_input('Sort time per SKU', 20)
-
 
     # Run the batching model
 
