@@ -91,10 +91,10 @@ if page == "Warehouse Insights":
     uploaded_file = st.file_uploader('Orders Data', type=['csv'])
     small_space()
 
-    if st.button('Data Preview'):
-        data_preview = pd.DataFrame(uploaded_file)
-        st.write(data_preview.head())
-        small_space()
+    # if st.button('Data Preview'):
+    #     data_preview = pd.DataFrame(uploaded_file)
+    #     st.write(data_preview.head())
+    #     small_space()
     # choose parameters to order batching
 
     st.subheader('Step 2: Choose parameters')
@@ -176,9 +176,9 @@ if page == "Product Insights":
         # st.text('some intro about the business and the project')
     uploaded_file = st.file_uploader('Order Data', type=['csv'])
 
-    if st.button('Data Preview'):
-        data_preview = pd.DataFrame(uploaded_file)
-        st.write(data_preview.head())
+    # if st.button('Data Preview'):
+    #     data_preview = pd.DataFrame(uploaded_file)
+    #     st.write(data_preview.head())
 
     small_space()
     st.subheader('Step 2: Analyse groups of products')
