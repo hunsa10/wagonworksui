@@ -89,10 +89,12 @@ if page == "Warehouse Insights":
     st.subheader("Step 1: Upload orders for the day")
     small_space()
     uploaded_file = st.file_uploader('Orders Data', type=['csv'])
-    # if uploaded_file:
-    #     st.write(pd.DataFrame(uploaded_file).head())
     small_space()
 
+    if st.button('Data Preview'):
+        data_preview = pd.DataFrame(uploaded_file)
+        st.write(data_preview.head())
+        small_space()
     # choose parameters to order batching
 
     st.subheader('Step 2: Choose parameters')
@@ -103,7 +105,7 @@ if page == "Warehouse Insights":
     small_space()
     st.markdown('Estimated processing times (in seconds)')
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.beta_columns(2)
     with col1:
         scan_time = st.text_input('Scan time', 3)
         confirm_location = st.text_input('Confirm location time', 2)
@@ -112,7 +114,7 @@ if page == "Warehouse Insights":
     with col2:
         confirm_pick = st.text_input('Confirm pick time', 2)
         confirm_box = st.text_input('Confirm box time', 5)
-        sort_time = st.text_input('Sort time per SKU', 20)
+        sort_time = st.text_input('Sort time per SKU', 10)
 
     # Run the batching model
 
@@ -125,7 +127,7 @@ if page == "Warehouse Insights":
 
             # uploaded_file_df = pd.read_csv(uploaded_file)
 
-            pool_result = order_pool_ui(uploaded_file)[0]
+            pool_result = order_pool_ui(uploaded_file)[12]
 
             #convert data into a list of dictionaries
             data_dict= pool_result.to_dict(orient='records')
@@ -134,10 +136,16 @@ if page == "Warehouse Insights":
 
             response = requests.post(api_url, json=data_dict).json()
 
-            st.write(f'Time saved is {round(response["Time_saved"], 2)}')
+            if response['Fastest_method'] != 'discrete':
 
-            st.write(f"{response['Fastest_method'].capitalize()} picking was the fastest method found taking \
-            {response['Best_time_result'] // (60*60)} hour and {round(response['Best_time_result'] % (60*60) / 60)} mins")
+                st.write(f'Time saved is {round(- response["Time_saved"]/60)} minutes')
+
+                st.write(f"Hybrid picking was the fastest method found taking \
+                {response['Best_time_result'] // (60*60)} hour(s) and {round(response['Best_time_result'] % (60*60) / 60)} minutes")
+
+            else:
+                st.write(f"{response['Fastest_method'].capitalize()} picking was the fastest method found taking\
+                {response['Best_time_result'] // (60*60)} hour(s) and {round(response['Best_time_result'] % (60*60) / 60)} minutes")
 
             dollar_input = 40
             st.write(f"This is a cost of ${round(response['Best_time_result'] * 0.01111111111111111, 2)} at ${str(dollar_input)} an hour")
@@ -168,10 +176,11 @@ if page == "Product Insights":
         # st.text('some intro about the business and the project')
     uploaded_file = st.file_uploader('Order Data', type=['csv'])
 
-    if uploaded_file:
-        st.write(pd.DataFrame(uploaded_file).head())
-        small_space()
+    if st.button('Data Preview'):
+        data_preview = pd.DataFrame(uploaded_file)
+        st.write(data_preview.head())
 
+    small_space()
     st.subheader('Step 2: Analyse groups of products')
 
     if st.button('Graph'):
@@ -231,7 +240,9 @@ if page == "Product Insights":
                                        'ZMEGSTA50658'] })
         st.write(product_df)
 
-
+# show csv to be downloaded
+        tmp_download_link = download_link(product_df, 'product_df.csv', 'Click here to download your data!')
+        st.markdown(tmp_download_link, unsafe_allow_html=True)
 #simulation for the presentation
     # big_space()
     # st.header('Demonstration')
