@@ -105,7 +105,7 @@ if page == "Warehouse Insights":
     small_space()
     st.markdown('Estimated processing times (in seconds)')
 
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     with col1:
         scan_time = st.text_input('Scan time', 3)
         confirm_location = st.text_input('Confirm location time', 2)
@@ -243,34 +243,3 @@ if page == "Product Insights":
 # show csv to be downloaded
         tmp_download_link = download_link(product_df, 'product_df.csv', 'Click here to download your data!')
         st.markdown(tmp_download_link, unsafe_allow_html=True)
-#simulation for the presentation
-    # big_space()
-    # st.header('Demonstration')
-
-    # df = pd.read_csv('data/centroid_df.csv')
-
-    # fig = px.scatter(df, x='x', y='y', size='Size',
-    #                  color='Group',
-    #                  #symbol_map=[1, 2, 3, 4],
-    #                  hover_name="Grouped Items",
-    #                  hover_data={'Grouped Items': False,
-    #                              'y': False,
-    #                             'Group': False,
-    #                             'Size': False},
-    #                  log_x=False,
-    #                  size_max=80,
-    #                  labels={'x': '', 'y': ''},
-    #                  title="Top 5 groups of items repeatedly bought together")
-
-    # fig.update_layout(plot_bgcolor='white')
-    # fig.update_xaxes(visible=False, showgrid=False)
-    # fig.update_yaxes(visible=False, showgrid=False)
-    # fig.update_layout(
-    #     hoverlabel=dict(
-    #         bgcolor="white",
-    #         font_size=14,
-    #         font_family="Helvetica"
-    #     )
-    # )
-    # st.plotly_chart(fig, use_container_width=True)
-
