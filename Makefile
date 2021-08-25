@@ -59,7 +59,7 @@ pypi:
 # ----------------------------------
 
 streamlit:
-	-@streamlit run wagonworksui/app.py
+	-@streamlit run app.py
 
 heroku_login:
 	-@heroku login
