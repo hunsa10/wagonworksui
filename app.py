@@ -102,6 +102,12 @@ if page == "Warehouse Insights":
     st.markdown('Priority Flag')
     option = st.selectbox('Same day delivery', ['Same day', 'Next day',
                                                 'All'])
+
+    if option != 'Same day':
+        small_space()
+        st.markdown('Choose hour of the day for orders to process (from 6am to 11pm)')
+        hour = int(st.text_input('Hour (between 6 - 23)', 6))
+
     small_space()
     st.markdown('Estimated processing times (in seconds)')
 
@@ -126,10 +132,18 @@ if page == "Warehouse Insights":
         if uploaded_file:
 
             # uploaded_file_df = pd.read_csv(uploaded_file)
+            if option == 'Same day':
+                pool_result = order_pool_ui(uploaded_file, same_day=True)[0]
+            elif option == 'Next day':
+                pool_result = order_pool_ui(uploaded_file, next_day=True)[hour-6]
+            else:
+                pool_result = order_pool_ui(uploaded_file)[hour-6]
 
-            pool_result = order_pool_ui(uploaded_file)[12]
 
-            #convert data into a list of dictionaries
+            # convert data into a list of dictionaries
+
+            # ADD LOOP TO GO THROUGH ALL DATAFRAMES
+
             data_dict= pool_result.to_dict(orient='records')
 
             api_url = f'https://wagonworks-api-dsvsmf3mja-de.a.run.app/warehouse?sort_time={sort_time}&scan_time={scan_time}&confirm_location={confirm_location}&pick_time={pick_time}&confirm_pick={confirm_pick}&confirm_box={confirm_box}'
