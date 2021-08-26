@@ -182,57 +182,30 @@ if page == "Product Insights":
     st.markdown('''
     Find out which items customers often buy together
     ''')
+    st.write('-----------------------------------------')
+
+
+    st.header('Analyse groups of products')
+    small_space()
+    if st.button('Group of Products'):
+        cluster_df = pd.DataFrame({'SKU':['ZJBC48029611 ZJBC3CT15536',
+                     'ZSPQ12R42525 ZSPGKIT10835 ZSPG15515052',
+                     'ZKEA0CT30068 ZKEA0CT12177 ZKEA0RM18767',
+                     'ZJBC4CT24841 ZJBC38040463',
+                     'ZES55KT19675 ZES505914544 ZES55KT15592 ZES557052022',
+                     'ZSPR3KT15326 ZSPR3RM49769 ZSPGKIT10835 ZSPG15515052',
+                     'ZCODT219903 ZCODT219903 ZEN1W2011867 ZSA162151312 ZSPROPK10850 ZPPS39613795',
+                     'ZES557052022 ZSA338037481',
+                     'ZCSCTAT37251 ZALNAND28131 ZSAB03424813',
+                     'ZSA300152267 ZBI40BE8172 ZJBTISS52650 ZKEJ08118908 ZVA429215526 ZVA429240904 ZJB4618173']})
+        st.write(cluster_df)
+        tmp_download_link = download_link(cluster_df, 'group of products.csv', 'Click here to download your data!')
+        st.markdown(tmp_download_link, unsafe_allow_html=True)
+
     big_space()
-
-    #product groups
-    st.header('Product clusters')
-    small_space()
-    st.subheader("Step 1: Upload the dataset")
-    # st.text('some intro about the business and the project')
-    uploaded_file = st.file_uploader('Order Data', type=['csv'])
-
-    # if st.button('Data Preview'):
-    #     data_preview = pd.DataFrame(uploaded_file)
-    #     st.write(data_preview.head())
-
-    small_space()
-    st.subheader('Step 2: Analyse groups of products')
-
-    if st.button('Graph'):
-        small_space()
-
-        df = pd.read_csv('data/centroid_df.csv')
-
-        fig = px.scatter(df, x='x', y='y', size='Size',
-                         color='Group',
-                         #symbol_map=[1, 2, 3, 4],
-                         hover_name="Grouped Items",
-                         hover_data={'Grouped Items': False,
-                                     'y': False,
-                                    'Group': False,
-                                    'Size': False},
-                         log_x=False,
-                         size_max=80,
-                         labels={'x': '', 'y': ''},
-                         title="Top 5 groups of items repeatedly bought together")
-
-        fig.update_layout(plot_bgcolor='white')
-        fig.update_xaxes(visible=False, showgrid=False)
-        fig.update_yaxes(visible=False, showgrid=False)
-        fig.update_layout(
-            hoverlabel=dict(
-                bgcolor="white",
-                font_size=14,
-                font_family="Helvetica"
-                )
-            )
-        st.plotly_chart(fig, use_container_width=True)
-
-    # else:
-    #     st.write("Please upload a csv file")
+    st.write('-----------------------------------------')
 
     #Products frequently bought together per sku
-    big_space()
     st.header('Products purchased together per SKU')
     small_space()
     st.subheader('Step 1: Choose a SKU')
@@ -256,5 +229,5 @@ if page == "Product Insights":
         st.write(product_df)
 
 # show csv to be downloaded
-        tmp_download_link = download_link(product_df, 'product_df.csv', 'Click here to download your data!')
+        tmp_download_link = download_link(product_df, 'product_list.csv', 'Click here to download your data!')
         st.markdown(tmp_download_link, unsafe_allow_html=True)
