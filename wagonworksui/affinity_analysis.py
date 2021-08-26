@@ -49,7 +49,7 @@ def w2v_df():
     df_article_string = concat_sku()
     X = [text_to_word_sequence(article) for article in df_article_string['SKU_A_space']]
     word2vec = Word2Vec(sentences=X)
-    df_article_embed = df_multiple_buys[df_multiple_buys['SKU_A'].str.lower().isin(list(word2vec.wv.vocab.keys()))]
+    df_article_embed = df_multiple_buys[df_multiple_buys['SKU_A'].str.lower().isin(list(word2vec.wv.index_to_key)]
 
     # create column for embedded articles
     df_article_embed['article_embed'] = df_article_embed['SKU_A'].apply(lambda x: word2vec.wv[x.lower()])
