@@ -100,8 +100,7 @@ if page == "Warehouse Insights":
     st.subheader('Step 2: Choose parameters')
     small_space()
     st.markdown('Priority Flag')
-    option = st.selectbox('Same day delivery', ['Same day', 'Next day',
-                                                'All'])
+    option = st.selectbox('Same day delivery', ['Same day', 'Next day'])
 
     if option != 'Same day':
         small_space()
@@ -111,7 +110,7 @@ if page == "Warehouse Insights":
     small_space()
     st.markdown('Estimated processing times (in seconds)')
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.beta_columns(2)
     with col1:
         scan_time = st.text_input('Scan time', 3)
         confirm_location = st.text_input('Confirm location time', 2)
@@ -136,39 +135,41 @@ if page == "Warehouse Insights":
                 pool_result = order_pool_ui(uploaded_file, same_day=True)[0]
             elif option == 'Next day':
                 pool_result = order_pool_ui(uploaded_file, next_day=True)[hour-6]
+
+
+            if len(pool_result) >0:
+
+                # convert data into a list of dictionaries
+
+                # ADD LOOP TO GO THROUGH ALL DATAFRAMES
+
+                data_dict= pool_result.to_dict(orient='records')
+
+                api_url = f'https://wagonworks-api-dsvsmf3mja-de.a.run.app/warehouse?sort_time={sort_time}&scan_time={scan_time}&confirm_location={confirm_location}&pick_time={pick_time}&confirm_pick={confirm_pick}&confirm_box={confirm_box}'
+
+                response = requests.post(api_url, json=data_dict).json()
+
+                if response['Fastest_method'] != 'discrete':
+
+                    st.write(f'Time saved is {round(- response["Time_saved"]/60)} minutes')
+
+                    st.write(f"Hybrid picking was the fastest method found taking \
+                    {response['Best_time_result'] // (60*60)} hour(s) and {round(response['Best_time_result'] % (60*60) / 60)} minutes")
+
+                else:
+                    st.write(f"{response['Fastest_method'].capitalize()} picking was the fastest method found taking\
+                    {response['Best_time_result'] // (60*60)} hour(s) and {round(response['Best_time_result'] % (60*60) / 60)} minutes")
+
+                dollar_input = 40
+                st.write(f"This is a cost of ${round(response['Best_time_result'] * 0.01111111111111111, 2)} at ${str(dollar_input)} an hour")
+
+                batch_labels = pd.DataFrame(response['Order_labels'])
+
+                # show csv to be downloaded
+                tmp_download_link = download_link(batch_labels, 'batching_result.csv', 'Click here to download your data!')
+                st.markdown(tmp_download_link, unsafe_allow_html=True)
             else:
-                pool_result = order_pool_ui(uploaded_file)[hour-6]
-
-
-            # convert data into a list of dictionaries
-
-            # ADD LOOP TO GO THROUGH ALL DATAFRAMES
-
-            data_dict= pool_result.to_dict(orient='records')
-
-            api_url = f'https://wagonworks-api-dsvsmf3mja-de.a.run.app/warehouse?sort_time={sort_time}&scan_time={scan_time}&confirm_location={confirm_location}&pick_time={pick_time}&confirm_pick={confirm_pick}&confirm_box={confirm_box}'
-
-            response = requests.post(api_url, json=data_dict).json()
-
-            if response['Fastest_method'] != 'discrete':
-
-                st.write(f'Time saved is {round(- response["Time_saved"]/60)} minutes')
-
-                st.write(f"Hybrid picking was the fastest method found taking \
-                {response['Best_time_result'] // (60*60)} hour(s) and {round(response['Best_time_result'] % (60*60) / 60)} minutes")
-
-            else:
-                st.write(f"{response['Fastest_method'].capitalize()} picking was the fastest method found taking\
-                {response['Best_time_result'] // (60*60)} hour(s) and {round(response['Best_time_result'] % (60*60) / 60)} minutes")
-
-            dollar_input = 40
-            st.write(f"This is a cost of ${round(response['Best_time_result'] * 0.01111111111111111, 2)} at ${str(dollar_input)} an hour")
-
-            batch_labels = pd.DataFrame(response['Order_labels'])
-
-            # show csv to be downloaded
-            tmp_download_link = download_link(batch_labels, 'batching_result.csv', 'Click here to download your data!')
-            st.markdown(tmp_download_link, unsafe_allow_html=True)
+                st.write("No orders for that hour")
 
         else:
             st.write("Please upload a csv file")
