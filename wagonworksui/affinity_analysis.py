@@ -5,11 +5,26 @@ from sklearn.cluster import KMeans
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from gensim.models import Word2Vec
 from get_data import get_month_data
+from utils import convert_date, convert_time, xl_to_py_date, xl_to_py_time, format_date, format_time,
+
+
+def get_csv(csv):
+    df = pd.read_csv(csv, low_memory = False)
+
+    # format date columns
+    df.loc[:,'Plan_GI_Date'] = format_date(df, date_col ='Plan_GI_Date')
+    df.loc[:,'Act_GI_Date'] = format_date(df, date_col ='Act_GI_Date')
+    df.loc[:,'Del_Creat_Date'] = format_date(df, date_col ='Del_Creat_Date')
+
+    # format date columns
+    df.loc[:,'Del_Creat_Time'] = format_time(df, time_col = 'Del_Creat_Time')
+
+    return df
 
 
 def filter_sku():
     # count no. of orders that only have one item
-    df = get_month_data('dec')[['Del_NumA', 'SKU_A']]
+    df = get_csv(csv)[['Del_NumA', 'SKU_A']]
     df_articles_counted = df.groupby('Del_NumA').count()
     order_list = df_articles_counted[df_articles_counted['SKU_A'] >1].index.tolist()
 
@@ -48,32 +63,29 @@ def split_cols():
     X = df_splited_cols.to_numpy()
     return X
 
-
-# model to use for prediction
-def kmeans_model():
+# km model to use to get clusters of products
+def km_model():
+    ''' fit kmeans model and calculate distance of each node to the centroid'''
     X = split_cols()
-    clustering = KMeans(n_clusters=10, n_init=10,
-                        random_state=1)
+    clustering = KMeans(n_clusters=20, n_init=10, random_state=1)
     clustering.fit(X)
-    return clustering
+    X_dist = clustering.transform(X) # calculate distance of each node to the centroid
 
-
-def label_df():
-    clustering = kmeans_model()
+    # create new columns for sum of distance and clustering labels
     df_article_embed = w2v_df()
+    df_article_embed['X_dist'] = X_dist.sum(axis=1).round(2)
     df_article_embed['labels'] = clustering.labels_
-    labeled_df = df_article_embed.drop_duplicates('SKU_A')
-    return labeled_df
+    df_article_unique = df_article_embed.drop_duplicates('SKU_A')
+    return df_article_unique
 
 
-# model to use for prediction
+# km model to use to get 10 products frequently bought together
 def kmeans_model():
     X = split_cols()
-    clustering = KMeans(n_clusters=10, n_init=10,
+    clustering = KMeans(n_clusters=20, n_init=10,
                         random_state=1)
     clustering.fit(X)
     return clustering
-
 
 def label_df():
     clustering = kmeans_model()
@@ -101,9 +113,31 @@ def get_cluster_sku(sku): # return df of all items in the same label as the ente
     return test_df
 
 
+# return clusters of products
+def clustered_articles(max_articles=10, max_clusters=10):
+    '''final result of article clusters that are most commonly purchased together'''
+
+    # find clusters that only have 2-5 SKUs
+    df_article_unique = km_model()
+    cluster_counted = df_article_unique.value_counts('labels')
+    small_clusters = cluster_counted[(cluster_counted<=max_clusters) & (cluster_counted>1)]
+
+    # create dataframe for small clusters (2-5 SKUs each cluster)
+    df_small_clusters = df_article_unique[df_article_unique['labels'].isin(small_clusters.index)]
+
+    # group by labels and find 5 clusters with lowest average distance
+    avg_dist_lowest = df_small_clusters.groupby('labels').mean().sort_values('X_dist').iloc[:max_clusters]
+    df_clustered_articles = df_small_clusters[df_small_clusters['labels'].isin(avg_dist_lowest.index)]
+
+    # group sku per cluster as items commonly purhcased together
+    df_clustered_articles['SKU_A_space'] = df_clustered_articles['SKU_A'] + ' '
+    df_results = pd.DataFrame(df_clustered_articles.groupby('labels')['SKU_A_space'].sum())
+    return df_results
+
+
 # return a list of the closet data points to the entered sku
 def purchased_together(sku):
-    test_df = get_cluster_sku(sku)
+    test_df =get_cluster_sku(sku)
     test_v = get_label(sku)[1]
     dist_sorted = test_df['article_embed'].apply(lambda x: euclidean(test_v, x)).sort_values()
 
