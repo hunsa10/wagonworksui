@@ -59,17 +59,11 @@ def order_pool_ui(csv, same_day=False, next_day=False):
         while len(loop_dataframe) > 0:
 
             # condition to prioritise same day orders
-            if same_day:
+
+            if len(loop_dataframe[loop_dataframe['Same_Day_Flag'] == 'X']) > 0:
                 day_flag = loop_dataframe[loop_dataframe['Same_Day_Flag'] == 'X'][['Del_NumA','SKU_A','Act_Goods_Issue_Qty_SKU','Del_Creat_DateTime', 'Same_Day_Flag']]
-
-            elif next_day:
-                day_flag = loop_dataframe[loop_dataframe['Same_Day_Flag'] != 'X'][['Del_NumA','SKU_A','Act_Goods_Issue_Qty_SKU','Del_Creat_DateTime', 'Same_Day_Flag']]
-
             else:
-                if len(loop_dataframe[loop_dataframe['Same_Day_Flag'] == 'X']) > 0:
-                    day_flag = loop_dataframe[loop_dataframe['Same_Day_Flag'] == 'X'][['Del_NumA','SKU_A','Act_Goods_Issue_Qty_SKU','Del_Creat_DateTime', 'Same_Day_Flag']]
-                else:
-                    day_flag = loop_dataframe[loop_dataframe['Same_Day_Flag'] != 'X'][['Del_NumA','SKU_A','Act_Goods_Issue_Qty_SKU','Del_Creat_DateTime', 'Same_Day_Flag']]
+                day_flag = loop_dataframe[loop_dataframe['Same_Day_Flag'] != 'X'][['Del_NumA','SKU_A','Act_Goods_Issue_Qty_SKU','Del_Creat_DateTime', 'Same_Day_Flag']]
 
             #select orders of the first available hour
             day_flag['Hour'] = day_flag['Del_Creat_DateTime'].dt.hour
