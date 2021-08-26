@@ -188,7 +188,7 @@ if page == "Product Insights":
     st.header('Product clusters')
     small_space()
     st.subheader("Step 1: Upload the dataset")
-        # st.text('some intro about the business and the project')
+    # st.text('some intro about the business and the project')
     uploaded_file = st.file_uploader('Order Data', type=['csv'])
 
     # if st.button('Data Preview'):
